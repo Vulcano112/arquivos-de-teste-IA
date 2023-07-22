@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>IA de Conversação com GPT-3</title>
+  <style>
+    body {
+      font-family: Arial; 
+      background: url("https://static.vecteezy.com/ti/vetor-gratis/p1/3549556-espaco-galaxia-fundo-vetor.jpg") center / cover no-repeat;
+      height: 100vh;
+      margin: 0;
+      display: flex;
+      color: white;
+      justify-content: center;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    h1 {
+      text-align: center;
+      color: white;
+    }
+
+    #chatbox {
+      height: 300px;
+      overflow-y: scroll;
+      border: 1px solid #ccc;
+      padding: 10px;
+    }
+
+    #userInput {
+      width: 80%;
+    }
+
+    button {
+      margin-left: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Teste de I.A</h1>
+    <div id="chatbox"></div>
+    <input type="text" id="userInput" placeholder="Digite sua mensagem..." autofocus />
+    <button onclick="sendMessage()">Enviar</button>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script>
+    const chatbox = document.getElementById("chatbox");
+    const userInput = document.getElementById("userInput");
+
+    // Função para adicionar uma mensagem na caixa de chat
+    function addMessage(message, sender) {
+      const messageElement = document.createElement("div");
+      messageElement.classList.add("message");
+      if (sender === "user") {
+        messageElement.classList.add("user-message");
+      } else {
+        messageElement.classList.add("ai-message");
+      }
+      messageElement.innerText = message;
+      chatbox.appendChild(messageElement);
+      chatbox.scrollTop = chatbox.scrollHeight;
+    }
+
+    // Função para enviar a mensagem do usuário e obter a resposta da IA
+    function sendMessage() {
+      const message = userInput.value;
+      addMessage(message, "user");
+      userInput.value = "";
+
+      // Chame a função de IA aqui para obter a resposta
+      getAIResponse(message)
+        .then(response => {
+          addMessage(response, "ai");
+        })
+        .catch(error => {
+          console.error('Erro na solicitação da API do GPT-3:', error);
+          addMessage('Desculpe, ocorreu um erro ao obter a resposta da IA.', 'ai');
+        });
+    }
+
+    // Função para obter a resposta da IA usando a API do GPT-3
+    async function getAIResponse(message) {
+      const apiKey = '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'; // Substitua pela sua chave de API do OpenAI
+
+      const apiUrl = 'https://api.openai.com/v1/engines/davinci-codex/completions';
+      const prompt = message;
+      const maxTokens = 50;
+
+      const response = await axios.post(apiUrl, {
+        prompt,
+        max_tokens: maxTokens
+      }, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${apiKey}`
+        }
+      });
+
+      const { choices } = response.data;
+      const aiResponse = choices[0].text.trim();
+      return aiResponse;
+    }
+  </script>
+</body>
+</html>

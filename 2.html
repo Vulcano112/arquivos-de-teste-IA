@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <style>
+      button {
+        display: block;
+        margin: 0 auto;
+        font-size: 48px;
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+      }
+    </style>
+</head>
+<body>
+    <button onclick="go()">
+        <span class="material-icons">mic</span>
+    </button>
+    <div id="question"></div>
+    <div id="display"></div>
+
+    <script>
+        const api_key = "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";
+
+        function go() {
+            const speechRecognition = new webkitSpeechRecognition();
+            speechRecognition.onresult = function(event) { 
+                question.innerHTML = "You said: " + event.results[0][0].transcript;
+                chat(event.results[0][0].transcript);
+            }
+            speechRecognition.lang = 'en-EN';
+            speechRecognition.start();
+        }
+
+        function chat(query) {
+            fetch("https://api.openai.com/v1/completions", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${api_key}`,
+                },
+                body: JSON.stringify({
+                    "model": "text-davinci-003",
+                    "prompt": query,
+                    "temperature": 0,
+                    "max_tokens": 20,
+                }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                display.innerHTML = "Response: " + data.choices[0].text;
+                const utterance = new SpeechSynthesisUtterance();
+                utterance.text = data.choices[0].text;
+                speechSynthesis.speak(utterance);  
+            })
+            .catch(error => {
+                console.error(error);
+            });
+        }
+    </script>
+</body>
+</html>

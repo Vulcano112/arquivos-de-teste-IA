@@ -1,0 +1,33 @@
+html, body {
+  background: url("https://static.vecteezy.com/ti/vetor-gratis/p1/3549556-espaco-galaxia-fundo-vetor.jpg") center / cover no-repeat;
+	height: 100vh;
+	margin: 0;
+	display: flex;
+	justify-content: center;
+}
+
+
+.container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+h1 {
+  text-align: center;
+}
+
+#chatbox {
+  height: 300px;
+  overflow-y: scroll;
+  border: 1px solid #ccc;
+  padding: 10px;
+}
+
+#userInput {
+  width: 80%;
+}
+
+button {
+  margin-left: 10px;
+}
